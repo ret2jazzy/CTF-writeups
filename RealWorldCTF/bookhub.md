@@ -119,7 +119,7 @@ So port 5000 is open which also runs pwnhub and there's also a weird service on 
 
 ![lol](https://i.imgur.com/HG03eh3.png)
 
-Oh, this is convienient. The webapp is run in debug mode. Let's take a look at the source what does the debug mode expose as "security issues". In the file `bookhub/views/user.py`, we identify the following addition code for debug mode
+Oh, this is convienient. The webapp is run in debug mode. Let's take a look at the source to see what does the debug mode expose as "security issues". In the file `bookhub/views/user.py`, we identify the following additional code for debug mode
 
 ```python
 if app.debug:
@@ -203,9 +203,9 @@ $ redis-cli
 127.0.0.1:6379> GET "bookhub:session:0c14aa8d-f405-4166-841a-04422ad2d6f6"
 "\x80\x03}q\x00(X\n\x00\x00\x00_permanentq\x01\x88X\x06\x00\x00\x00_freshq\x02\x89X\n\x00\x00\x00csrf_tokenq\x03X(\x00\x00\x00a9bcf95844a0bfa0a217cd95b23a174472d780d8q\x04u."
 ```
-This looks like a pickle serialized python object with. You can easily identify a serialized pickle with the `\x80\x03` at the start. This points to your typical pickle deserialization vuln. 
+This looks like a pickle serialized python object. You can easily identify a serialized pickle with the `\x80\x03` at the start. This points to your typical pickle deserialization vuln. 
 
-I wrote a quick script which changed my sessionID to valid lua, refreshed my CSRF token and then sent POST request to "/admin/system/refresh_session/" endpoint (to store the code). 
+I wrote a quick script which changed my sessionID to valid lua, refreshed my CSRF token and then sent a POST request to "/admin/system/refresh_session/" endpoint (to store the code). 
 
 My final payload was to do a `redis.call("SET", "bookhub:session:hacker", {pickle RCE code serialized})` and then send a GET request to "/login/" to make sure our serialized object is deserialized.
 
