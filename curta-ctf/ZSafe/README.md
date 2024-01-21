@@ -75,7 +75,7 @@ The second check can also be bypassed if we set the storage slots during deploym
 
 The rest is just implenting it. Check out the solve script in [scripts/](./scripts/) for more details
 
-## ECDSA 
+## Part 2 - ECDSA 
 
 The challenge till now is just a general CTF challenge. But the problem is that it's easily copy-able once the exploit is public.
 
